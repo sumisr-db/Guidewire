@@ -1,4 +1,4 @@
-# 🚀 Claude Code + Databricks App Template
+# 🚀 Guidewire Connection to Databricks
 
 A modern, full-stack application template for building Databricks Apps with Python FastAPI backend and React TypeScript frontend. 
 
