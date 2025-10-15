@@ -299,6 +299,8 @@ client/src/client/
 # Debug and temporary files
 debug_*.py
 *.whl
+# Exception: Include guidewire wheel needed for deployment
+!guidewire_cda_delta_clone-*.whl
 
 # Claude source code extractions
 .claude/GWSRC/

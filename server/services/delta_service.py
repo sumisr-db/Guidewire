@@ -29,7 +29,9 @@ class DeltaService:
   def __init__(self):
     """Initialize Delta service with Databricks connection."""
     self.workspace_client = None
-    self.cluster_id = None
+    # Use the cluster that the app service principal has access to
+    # This cluster was configured with CAN_RESTART permission for the service principal
+    self.cluster_id = '0919-145701-wdep1oev'  # Oliver Koernig's Cluster (shared, not single-user)
 
   def _get_workspace_client(self) -> WorkspaceClient:
     """Get or create Databricks workspace client."""
@@ -38,44 +40,41 @@ class DeltaService:
     return self.workspace_client
 
   def _get_cluster_id(self) -> str:
-    """Get or create a running cluster for SQL execution."""
+    """Get the configured cluster ID, ensuring it's running.
+
+    The cluster is pre-configured in __init__ with proper permissions
+    for the app service principal.
+    """
     if not self.cluster_id:
-      w = self._get_workspace_client()
-      current_user = w.current_user.me().user_name
+      raise ValueError('Cluster ID not configured')
 
-      # Try to find a running cluster that the current user can access
-      clusters = list(w.clusters.list())
-      accessible_clusters = []
+    w = self._get_workspace_client()
 
-      for cluster in clusters:
-        # Skip DLT pipeline and job clusters (can't be manually started)
-        if cluster.cluster_source and cluster.cluster_source.value in ['PIPELINE', 'JOB']:
-          continue
+    # Check cluster state and start if needed
+    try:
+      cluster_info = w.clusters.get(self.cluster_id)
 
-        # Check if cluster is accessible (owned by user or not single-user)
-        if cluster.single_user_name == current_user or not cluster.single_user_name:
-          accessible_clusters.append(cluster)
-          if cluster.state and cluster.state.value == 'RUNNING':
-            self.cluster_id = cluster.cluster_id
-            logger.info(f'Using existing running cluster: {self.cluster_id} ({cluster.cluster_name})')
-            return self.cluster_id
+      if cluster_info.state and cluster_info.state.value == 'RUNNING':
+        logger.info(f'Using running cluster: {self.cluster_id}')
+        return self.cluster_id
 
-      # If no running cluster, start the first accessible one
-      if accessible_clusters:
-        cluster = accessible_clusters[0]
-        self.cluster_id = cluster.cluster_id
-        logger.info(f'Starting cluster: {self.cluster_id} ({cluster.cluster_name})')
-        w.clusters.start(self.cluster_id)
-        # Wait for cluster to start (with timeout)
-        for _ in range(60):  # Wait up to 5 minutes
-          cluster_info = w.clusters.get(self.cluster_id)
-          if cluster_info.state and cluster_info.state.value == 'RUNNING':
-            logger.info(f'Cluster {self.cluster_id} is now running')
-            return self.cluster_id
-          time.sleep(5)
-        raise ValueError(f'Cluster {self.cluster_id} failed to start')
+      # Start the cluster if it's not running
+      logger.info(f'Starting cluster: {self.cluster_id}')
+      w.clusters.start(self.cluster_id)
 
-      raise ValueError('No accessible clusters available')
+      # Wait for cluster to start (with timeout)
+      for _ in range(60):  # Wait up to 5 minutes
+        cluster_info = w.clusters.get(self.cluster_id)
+        if cluster_info.state and cluster_info.state.value == 'RUNNING':
+          logger.info(f'Cluster {self.cluster_id} is now running')
+          return self.cluster_id
+        time.sleep(5)
+
+      raise ValueError(f'Cluster {self.cluster_id} failed to start within timeout')
+
+    except Exception as e:
+      logger.error(f'Failed to access cluster {self.cluster_id}: {e}')
+      raise ValueError(f'Cannot access cluster {self.cluster_id}. Ensure the app service principal has CAN_RESTART permission.')
 
     return self.cluster_id
 

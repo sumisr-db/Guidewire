@@ -1,5 +1,8 @@
 // API client wrapper with error handling
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// In production (Databricks Apps), use relative URLs to same origin
+// In development, use localhost:8000
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.MODE === 'production' ? '' : 'http://localhost:8000');
 
 class ApiError extends Error {
   constructor(
@@ -23,7 +26,9 @@ export const apiClient = {
       });
     }
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      credentials: 'include', // Include cookies for Databricks Apps OAuth
+    });
 
     // Check for HTTP errors
     if (!response.ok) {
@@ -63,6 +68,7 @@ export const apiClient = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(options?.body),
+      credentials: 'include', // Include cookies for Databricks Apps OAuth
     });
 
     // Check for HTTP errors
@@ -92,6 +98,7 @@ export const apiClient = {
 
     const response = await fetch(url, {
       method: 'DELETE',
+      credentials: 'include', // Include cookies for Databricks Apps OAuth
     });
 
     // Check for HTTP errors

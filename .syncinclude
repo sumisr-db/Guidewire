@@ -1,0 +1,2 @@
+# Include wheel files needed for deployment
+guidewire_cda_delta_clone-*.whl

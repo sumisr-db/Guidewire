@@ -54,11 +54,14 @@ def generate_semver_requirements():
     with open(pyproject_path, 'rb') as f:
       pyproject = tomllib.load(f)
     dependencies = pyproject.get('project', {}).get('dependencies', [])
+    # Get local path sources from tool.uv.sources
+    sources = pyproject.get('tool', {}).get('uv', {}).get('sources', {})
   else:
     # Manual parsing fallback
     with open(pyproject_path, 'r') as f:
       content = f.read()
     dependencies = parse_dependencies_manual(content)
+    sources = {}
 
   if not dependencies:
     print('Warning: No dependencies found in pyproject.toml', file=sys.stderr)
@@ -69,8 +72,14 @@ def generate_semver_requirements():
     f.write('# Avoids editable installs and hash conflicts\n\n')
 
     for dep in dependencies:
-      # Write each dependency on its own line
-      f.write(f'{dep}\n')
+      # Check if dependency has a local path source
+      pkg_name = dep.split('>=')[0].split('==')[0].split('<')[0].split('>')[0]
+      if pkg_name in sources and 'path' in sources[pkg_name]:
+        # Use local path for wheel file
+        f.write(f'./{sources[pkg_name]["path"]}\n')
+      else:
+        # Write normal dependency with version constraint
+        f.write(f'{dep}\n')
 
   print(f'Generated requirements.txt with {len(dependencies)} dependencies')
 
