@@ -9,6 +9,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from server.routers import router
+from server.routers.guidewire import router as guidewire_router
+from server.routers.s3_browser import router as s3_browser_router
+from server.routers.delta import router as delta_router
 
 
 # Load environment variables from .env.local if it exists
@@ -44,13 +47,21 @@ app = FastAPI(
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=['http://localhost:3000', 'http://127.0.0.1:3000'],
+  allow_origins=[
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+  ],
   allow_credentials=True,
   allow_methods=['*'],
   allow_headers=['*'],
 )
 
 app.include_router(router, prefix='/api', tags=['api'])
+app.include_router(guidewire_router)
+app.include_router(s3_browser_router)
+app.include_router(delta_router)
 
 
 @app.get('/health')

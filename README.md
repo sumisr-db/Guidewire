@@ -89,6 +89,10 @@ Before using this template, ensure you have:
 - **Homebrew** - Package manager (macOS only, auto-checked)
 - **Playwright** - Browser automation and testing (optional but recommended)
 
+### Local S3 (optional for development)
+
+If you need an S3-compatible server for local development, this repo includes documentation and a quick setup for MinIO (a lightweight S3-compatible server). See `docs/local-s3.md` for steps to run MinIO on your laptop (S3 API on port 9000, Console on port 9001).
+
 Note: Python 3.11+ and Databricks CLI are automatically managed by uv
 
 The `setup.sh` script will help you install any missing dependencies with interactive prompts.

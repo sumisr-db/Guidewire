@@ -295,3 +295,10 @@ mlartifacts/
 
 # Generated client
 client/src/client/
+
+# Debug and temporary files
+debug_*.py
+*.whl
+
+# Claude source code extractions
+.claude/GWSRC/
