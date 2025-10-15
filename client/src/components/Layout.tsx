@@ -64,7 +64,7 @@ export function Layout({ children }: LayoutProps) {
                 Delta Inspector
               </Link>
               <a
-                href="http://localhost:8000/docs"
+                href="/docs"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-semibold text-slate-600 hover:text-red-600 transition-colors"

@@ -63,7 +63,7 @@ export function JobDetailPage() {
     setShowRayLogs(true);
     setRayLogs(['Connecting to Ray logs stream...']);
 
-    const eventSource = new EventSource(`http://localhost:8000/api/guidewire/jobs/${jobId}/ray-logs`);
+    const eventSource = new EventSource(`/api/guidewire/jobs/${jobId}/ray-logs`);
     eventSourceRef.current = eventSource;
 
     eventSource.onmessage = (event) => {
