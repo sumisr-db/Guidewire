@@ -4,9 +4,10 @@ import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from server.routers import router
 from server.routers.guidewire import router as guidewire_router
@@ -77,4 +78,23 @@ async def health():
 # It catches all unmatched requests and serves the React app.
 # Any routes added after this will be unreachable!
 if os.path.exists('client/build'):
-  app.mount('/', StaticFiles(directory='client/build', html=True), name='static')
+  # Mount static assets (JS, CSS, images, etc.)
+  app.mount('/assets', StaticFiles(directory='client/build/assets'), name='assets')
+
+  # SPA catch-all: serve index.html for all unmatched routes
+  # This enables client-side routing to work on page reload
+  @app.get('/{full_path:path}')
+  async def serve_spa(full_path: str):
+    """Serve React SPA for all unmatched routes (enables client-side routing)."""
+    # First, try to serve static files from build directory (like favicon.ico, logo.png, etc.)
+    # Only check root-level files (no slashes in path) to avoid conflicts with React routes
+    if '/' not in full_path:
+      file_path = Path('client/build') / full_path
+      if file_path.exists() and file_path.is_file():
+        return FileResponse(file_path)
+
+    # For everything else (React routes), serve index.html
+    index_path = Path('client/build/index.html')
+    if index_path.exists():
+      return FileResponse(index_path)
+    return {'error': 'Frontend build not found'}
