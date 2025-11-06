@@ -1,159 +1,174 @@
-# 🚀 Guidewire Connection to Databricks
+# 🚀 Guidewire Connector Monitor
 
-A modern, full-stack application template for building Databricks Apps with Python FastAPI backend and React TypeScript frontend. 
+A production-ready Databricks application for processing Guidewire Cloud Data Access (CDA) data into Delta Lake tables with comprehensive monitoring, inspection, and S3 browsing capabilities.
 
-**[Claude Code](https://claude.ai/code)-centric workflow** - a single `/dba` command transforms your ideas into deployed applications. Claude guides you through product requirements, technical design, implementation, and deployment. It knows the entire Databricks Apps ecosystem and self-heals by automatically diagnosing and fixing issues.
-
-The `/dba` workflow acts as your product strategist and development architect - brainstorming ideas with you, then building everything all the way to deployment.
+**Built with modern technologies**: FastAPI backend with React TypeScript frontend, deployed as a Databricks App with seamless workspace integration.
 
 ![Databricks Apps](https://img.shields.io/badge/Databricks-Apps-orange)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green)
 ![React](https://img.shields.io/badge/React-18+-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue)
-![Claude](https://img.shields.io/badge/Claude-Ready-purple)
+![Delta Lake](https://img.shields.io/badge/Delta-Lake-blue)
+![Guidewire](https://img.shields.io/badge/Guidewire-CDA-red)
 
-## 🚀 Getting Started
+## 🎯 What This App Does
 
-### 1. Use This Template
+**Guidewire Connector Monitor** provides a complete solution for ingesting Guidewire CDA data into Databricks:
 
-Click **"Use this template"** on GitHub to create your own Databricks app repository.
+- **🔄 Processing Jobs**: Start and monitor Guidewire CDA to Delta Lake conversion jobs with Ray parallel processing
+- **🔍 Delta Inspector**: Inspect Delta Lake tables with schema viewer, transaction history, and data preview
+- **📁 S3 Browser**: Browse S3 or MinIO buckets, navigate folders, search files, and download data
+- **📊 Real-time Monitoring**: Track job progress with live updates, table-by-table status, and error handling
 
-### 2. Clone Your New Repository
+## 🚀 Quick Start
+
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/your-databricks-app
-cd your-databricks-app
+git clone https://github.com/sumisr-db/Guidewire.git
+cd Guidewire
 ```
 
-### 3. Choose Your Development Approach
+### 2. Setup Environment
 
-#### Option A: Automatic Workflow with `/dba` (Recommended)
+Run the interactive setup script to configure your environment:
 
-Open your repository in [Claude Code](https://claude.ai/code) and run the fully automated, opinionated workflow:
-
-```
-/dba describe your app here
+```bash
+./setup.sh
 ```
 
-The `/dba` command will:
-- ✅ **Set up your development environment** with interactive configuration
-- ✅ **Test your app locally** before deployment to catch issues early
-- ✅ **Create or verify your Databricks app** exists
-- ✅ **Deploy successfully** to Databricks Apps platform
-- ✅ **Guide you through product requirements** with collaborative iteration
-- ✅ **Design your technical architecture** with ultrathinking approach
-- ✅ **Generate documentation** (`docs/product.md` and `docs/design.md`)
-- ✅ **Optionally implement your design** or provide guidance for later implementation
+This will:
+- Check and install required dependencies (Git, uv, bun, Node.js)
+- Configure Databricks authentication (PAT or CLI profile)
+- Install Python and frontend dependencies
+- Set up environment variables
 
-This provides a complete guided experience from idea to deployed app.
+### 3. Start Development Server
 
-#### Option B: Manual Setup with Full Control
+```bash
+./watch.sh
+```
 
-If you prefer to have full control over the development process:
+This runs both servers in the background:
+- **Frontend**: http://localhost:5173
+- **Backend**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
 
-1. **Run the setup script** to configure your environment:
-   ```bash
-   ./setup.sh
-   ```
+### 4. Open the Application
 
-2. **Open in Claude Code** and develop normally. Claude will:
-   - Know about your entire repository structure
-   - Understand the Databricks Apps framework
-   - Help with any development tasks you request
-   - Use the natural language commands documented below
-
-This approach gives you complete flexibility while still benefiting from Claude's knowledge of the codebase and all available commands.
-
----
-
-## 🎬 Demo
-
-This is a [40-minute walkthrough demo](https://youtu.be/jDBTfxk1r7Q) of making an app from start to finish using the `/dba` command in Claude Code.
-
-**Working Example**: [trace-summary-dashboard branch](https://github.com/databricks-solutions/claude-databricks-app-template/tree/trace-summary-dashboard) - Complete implementation from the video  
-**See the Changes**: [View diff](https://github.com/databricks-solutions/claude-databricks-app-template/compare/trace-summary-dashboard?expand=1) - All code changes made during the demo
-
-[![claude_dba_hero](https://github.com/user-attachments/assets/75492599-e5a1-4855-a9d1-c76d45c48da8)](https://youtu.be/jDBTfxk1r7Q)
+Navigate to http://localhost:5173 to access the Guidewire Connector Monitor interface.
 
 ---
 
 ## 📋 Prerequisites
 
-Before using this template, ensure you have:
-
 ### Required Tools
 - **Git** - Version control
 - **uv** - Ultra-fast Python package manager (auto-manages Python versions)
 - **bun** - Fast JavaScript package manager
-- **Node.js 18+** - Required for Playwright
+- **Node.js 18+** - Required for frontend build
 - **Homebrew** - Package manager (macOS only, auto-checked)
-- **Playwright** - Browser automation and testing (optional but recommended)
 
-### Local S3 (optional for development)
+Note: Python 3.11+ and Databricks CLI are automatically managed by uv. The `setup.sh` script will help you install any missing dependencies with interactive prompts.
 
-If you need an S3-compatible server for local development, this repo includes documentation and a quick setup for MinIO (a lightweight S3-compatible server). See `docs/local-s3.md` for steps to run MinIO on your laptop (S3 API on port 9000, Console on port 9001).
-
-Note: Python 3.11+ and Databricks CLI are automatically managed by uv
-
-The `setup.sh` script will help you install any missing dependencies with interactive prompts.
-
-### Databricks Setup
+### Databricks Requirements
 - Valid Databricks workspace
 - Personal Access Token (PAT) or CLI profile configured
+- Cluster with CAN_RESTART permission for the app service principal
 - Appropriate permissions for app deployment
+
+### Data Sources
+- **AWS S3** or **MinIO** for Guidewire CDA manifest and data files
+- S3 credentials with ListBucket and GetObject permissions
+
+For local development, you can use MinIO (lightweight S3-compatible server). See `docs/local-s3.md` for setup instructions (S3 API on port 9000, Console on port 9001).
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-- **🔥 Hot Reloading** - Instant updates for both Python backend and React frontend
-- **🔄 Auto-Generated API Client** - TypeScript client automatically generated from FastAPI OpenAPI spec
-- **🔐 Databricks Authentication** - Integrated with Databricks SDK for seamless workspace integration
-- **🎨 Modern UI** - Beautiful components using shadcn/ui + Tailwind CSS
-- **📦 Package Management** - uv for Python, bun for frontend
-- **🚀 Databricks Apps Ready** - Pre-configured for deployment to Databricks Apps platform
-- **🤖 Claude Integration** - Natural language development commands documented
+### Processing & Monitoring
+- **⚡ Ray Parallel Processing** - Process multiple Guidewire tables simultaneously for faster ingestion
+- **📊 Real-time Progress Tracking** - Live job status with progress bars and table-by-table details
+- **🔄 Automatic Retries** - Robust error handling with detailed failure reporting
+- **📈 Job History** - Complete audit trail of all processing jobs
+
+### Delta Lake Integration
+- **🔍 Schema Inspector** - View table structure, data types, and partition columns
+- **📜 Transaction History** - Full Delta Lake transaction log with version tracking
+- **👁️ Data Preview** - Browse actual table data with 100-row samples
+- **✅ Data Validation** - Verify processing results with row counts and data sampling
+
+### S3/MinIO Browser
+- **📁 File Navigation** - Browse buckets and folders with breadcrumb navigation
+- **🔎 Search** - Filter files and folders by name in real-time
+- **⬇️ Secure Downloads** - Generate pre-signed URLs for file downloads
+- **🌐 Multi-Provider** - Support for both AWS S3 and local MinIO
+
+### Technical Features
+- **🔥 Hot Reloading** - Instant updates during development for both frontend and backend
+- **🔄 Auto-Generated API Client** - TypeScript client generated from FastAPI OpenAPI spec
+- **🔐 Databricks Authentication** - Seamless workspace integration with Databricks SDK
+- **🎨 Modern UI** - Beautiful, responsive interface using shadcn/ui + Tailwind CSS
+- **🚀 Production Ready** - Deployed as Databricks App with proper error handling and logging
 
 ## 🏗️ Project Structure
 
 ```
-├── server/                    # FastAPI backend
-│   ├── app.py                 # Main application
-│   ├── routers/               # API route handlers
-│   │   └── __init__.py        # Example router
-│   └── services/              # Business logic
+├── server/                         # FastAPI backend
+│   ├── app.py                      # Main application
+│   ├── routers/                    # API route handlers
+│   │   ├── guidewire.py           # Guidewire CDA processing endpoints
+│   │   ├── delta.py               # Delta Lake inspection endpoints
+│   │   ├── s3_browser.py          # S3/MinIO browser endpoints
+│   │   └── user.py                # User information endpoints
+│   ├── models/                     # Pydantic data models
+│   │   ├── guidewire.py           # Job and processing models
+│   │   ├── delta.py               # Delta table models
+│   │   └── s3_browser.py          # S3 object models
+│   └── services/                   # Business logic
+│       ├── guidewire_service.py   # Job management and processing
+│       ├── delta_service.py       # Delta Lake operations
+│       ├── s3_browser_service.py  # S3/MinIO operations
+│       └── s3_client_factory.py   # S3 client configuration
 │
-├── client/                    # React frontend
+├── client/                         # React TypeScript frontend
 │   ├── src/
-│   │   ├── pages/            # React pages
-│   │   ├── components/       # UI components
-│   │   ├── lib/             # Utilities
-│   │   └── fastapi_client/  # Generated API client
-│   ├── package.json         # Frontend dependencies
-│   └── vite.config.ts       # Vite configuration
+│   │   ├── pages/                 # Main application pages
+│   │   │   ├── WelcomePage.tsx   # Landing page
+│   │   │   ├── GuidewireJobsPage.tsx      # Job management UI
+│   │   │   ├── JobDetailPage.tsx          # Job detail view
+│   │   │   ├── DeltaInspectorPage.tsx     # Delta table inspection
+│   │   │   └── S3BrowserPage.tsx          # S3/MinIO browser
+│   │   ├── components/            # Reusable UI components (shadcn/ui)
+│   │   ├── lib/                   # Utilities and helpers
+│   │   └── fastapi_client/        # Auto-generated API client
+│   ├── package.json               # Frontend dependencies
+│   └── vite.config.ts             # Vite configuration
 │
-├── setup_utils/               # Modular setup system
-│   ├── utils.sh              # Shared utilities
-│   ├── check_git.sh          # Git dependency check
-│   ├── check_uv.sh           # uv package manager check
-│   ├── check_bun.sh          # Bun package manager check
-│   ├── check_node.sh         # Node.js 18+ check
-│   └── check_homebrew.sh     # Homebrew check (macOS)
+├── docs/                           # Documentation
+│   ├── product.md                 # Product requirements
+│   ├── design.md                  # Technical design
+│   ├── local-s3.md                # MinIO setup guide
+│   └── databricks_apis/           # Databricks API docs
 │
-├── scripts/                   # Development automation
-│   ├── watch.sh             # Development server
-│   ├── fix.sh               # Code formatting
-│   └── deploy.sh            # Deployment
+├── scripts/                        # Automation scripts
+│   ├── make_fastapi_client.py    # Generate TypeScript client
+│   └── generate_semver_requirements.py # Create requirements.txt
 │
-├── setup.sh                  # Main setup script
-├── pyproject.toml            # Python dependencies
-├── app.yaml                  # Databricks Apps config
-└── CLAUDE.md                 # Development guide
+├── setup.sh                        # Interactive environment setup
+├── watch.sh                        # Development server launcher
+├── fix.sh                          # Code formatter (ruff + prettier)
+├── deploy.sh                       # Databricks Apps deployment
+├── app_status.sh                   # Check deployed app status
+├── dba_client.py                   # CLI tool for testing endpoints
+├── dba_logz.py                     # Real-time log streaming
+├── pyproject.toml                  # Python dependencies
+├── app.yaml                        # Databricks Apps configuration
+└── CLAUDE.md                       # Development guide for Claude Code
 ```
 
-## 🚀 Quick Start (Manual Setup)
-
-> **Note:** This section is for manual setup. For the automated workflow, use the `/dba` command described above.
+## 🔧 Development Workflow
 
 ### 1. Setup Environment
 
@@ -182,32 +197,15 @@ This runs both servers in the background:
 - **Backend**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
 
-### 3. View Your App
+### 3. Access the Application
 
-Open http://localhost:5173 to see the beautiful welcome page with:
-- Getting Started guide
-- Claude Commands reference
-- Tech Stack overview
-- Project Structure visualization
-- Current user information from Databricks
+Open http://localhost:5173 to access the Guidewire Connector Monitor with:
+- **Home Page**: Application overview and development commands
+- **Processing Jobs**: Start and monitor CDA to Delta Lake jobs
+- **Delta Inspector**: Inspect Delta tables with schema, history, and preview
+- **S3 Browser**: Browse and download files from S3 or MinIO
 
-## 🧠 Claude Commands
-
-This template includes natural language commands that Claude understands:
-
-### Development Lifecycle
-- `"start the devserver"` → Runs development servers
-- `"kill the devserver"` → Stops background processes
-- `"fix the code"` → Formats Python and TypeScript code
-- `"deploy the app"` → Deploys to Databricks Apps
-
-### Development Tasks
-- `"add a new API endpoint"` → Creates FastAPI routes
-- `"create a new React component"` → Builds UI components
-- `"open the UI in playwright"` → Opens app in browser for testing
-- `"debug this error"` → Analyzes logs and fixes issues
-
-See `CLAUDE.md` for the complete development guide.
+See the **User Guide** section below for detailed instructions on using each feature.
 
 ## 🛠️ Development Commands
 
@@ -353,12 +351,27 @@ The deployment script automatically:
 - **Authentication**: Verify `.env.local` configuration
 - **CLI outdated**: Since we use `databricks`, the CLI is always up-to-date
 
-## 📝 Customization
+## 🔧 Extending the Application
 
-1. **Update branding** in `client/src/pages/WelcomePage.tsx`
-2. **Add new API endpoints** in `server/routers/`
-3. **Create UI components** in `client/src/components/`
-4. **Modify authentication** in `scripts/setup.sh`
+### Adding New Features
+
+**Add API Endpoints**:
+- Create new routers in `server/routers/`
+- Define Pydantic models in `server/models/`
+- Implement business logic in `server/services/`
+- Auto-generated TypeScript client will include new endpoints
+
+**Create UI Pages**:
+- Add React pages in `client/src/pages/`
+- Use shadcn/ui components from `client/src/components/ui/`
+- Import API client: `import { apiClient } from '@/lib/api'`
+- Add routes in `client/src/App.tsx`
+
+**Add Dependencies**:
+- Python: `uv add package-name`
+- Frontend: `cd client && bun add package-name`
+
+See `CLAUDE.md` for detailed development workflows and best practices.
 
 ## 🐛 Troubleshooting
 
