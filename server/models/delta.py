@@ -1,8 +1,9 @@
 """Pydantic models for Delta Lake inspection."""
 
-from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class DeltaTableInfo(BaseModel):
@@ -12,9 +13,7 @@ class DeltaTableInfo(BaseModel):
   path: str = Field(..., description='S3 path to Delta table')
   size_bytes: int = Field(..., description='Total size in bytes')
   num_files: int = Field(..., description='Number of data files')
-  last_modified: Optional[datetime] = Field(
-    default=None, description='Last modification time'
-  )
+  last_modified: Optional[datetime] = Field(default=None, description='Last modification time')
 
 
 class DeltaColumn(BaseModel):
@@ -23,9 +22,7 @@ class DeltaColumn(BaseModel):
   name: str = Field(..., description='Column name')
   type: str = Field(..., description='Data type')
   nullable: bool = Field(default=True, description='Whether column is nullable')
-  metadata: Optional[Dict[str, Any]] = Field(
-    default=None, description='Column metadata'
-  )
+  metadata: Optional[Dict[str, Any]] = Field(default=None, description='Column metadata')
 
 
 class DeltaTableSchema(BaseModel):
@@ -33,9 +30,7 @@ class DeltaTableSchema(BaseModel):
 
   table_name: str = Field(..., description='Table name')
   columns: List[DeltaColumn] = Field(..., description='List of columns')
-  partition_columns: List[str] = Field(
-    default_factory=list, description='Partition columns'
-  )
+  partition_columns: List[str] = Field(default_factory=list, description='Partition columns')
 
 
 class DeltaHistoryEntry(BaseModel):
@@ -71,9 +66,7 @@ class DeltaTablePreview(BaseModel):
   table_name: str = Field(..., description='Table name')
   columns: List[str] = Field(..., description='Column names')
   rows: List[Dict[str, Any]] = Field(..., description='Sample rows')
-  total_count: Optional[int] = Field(
-    default=None, description='Total row count (if available)'
-  )
+  total_count: Optional[int] = Field(default=None, description='Total row count (if available)')
   limit: int = Field(default=100, description='Number of rows returned')
 
 

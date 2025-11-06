@@ -4,15 +4,15 @@ import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from server.routers import router
+from server.routers.delta import router as delta_router
 from server.routers.guidewire import router as guidewire_router
 from server.routers.s3_browser import router as s3_browser_router
-from server.routers.delta import router as delta_router
 
 
 # Load environment variables from .env.local if it exists

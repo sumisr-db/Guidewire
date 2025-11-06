@@ -1,9 +1,10 @@
 """Pydantic models for S3 browser functionality."""
 
 from datetime import datetime
-from typing import Optional, List
-from pydantic import BaseModel, Field
 from enum import Enum
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class S3Provider(str, Enum):
@@ -48,12 +49,8 @@ class S3ListingResponse(BaseModel):
 
   bucket: str = Field(..., description='Bucket name')
   prefix: str = Field(..., description='Current prefix/path')
-  prefixes: List[S3Prefix] = Field(
-    default_factory=list, description='Sub-folders in current path'
-  )
-  objects: List[S3Object] = Field(
-    default_factory=list, description='Objects in current path'
-  )
+  prefixes: List[S3Prefix] = Field(default_factory=list, description='Sub-folders in current path')
+  objects: List[S3Object] = Field(default_factory=list, description='Objects in current path')
   total_objects: int = Field(default=0, description='Total number of objects')
   total_size: int = Field(default=0, description='Total size in bytes')
 
@@ -62,9 +59,7 @@ class S3BucketInfo(BaseModel):
   """Information about an S3 bucket."""
 
   name: str = Field(..., description='Bucket name')
-  creation_date: Optional[datetime] = Field(
-    default=None, description='Bucket creation date'
-  )
+  creation_date: Optional[datetime] = Field(default=None, description='Bucket creation date')
   region: Optional[str] = Field(default=None, description='Bucket region')
 
 

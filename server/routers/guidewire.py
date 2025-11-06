@@ -1,17 +1,18 @@
 """FastAPI router for Guidewire CDA processing endpoints."""
 
+import asyncio
+import glob
+import os
+from typing import List
+
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
-from typing import List
-import asyncio
-import os
-import glob
 
 from server.models.guidewire import (
-  StartJobRequest,
-  StartJobResponse,
   ProcessingJobStatus,
   ProcessingJobSummary,
+  StartJobRequest,
+  StartJobResponse,
 )
 from server.services.guidewire_service import guidewire_service
 
@@ -101,9 +102,7 @@ async def get_job_status(job_id: str) -> ProcessingJobStatus:
   """
   job_status = guidewire_service.get_job_status(job_id)
   if not job_status:
-    raise HTTPException(
-      status_code=status.HTTP_404_NOT_FOUND, detail=f'Job {job_id} not found'
-    )
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Job {job_id} not found')
   return job_status
 
 
@@ -125,9 +124,7 @@ async def cancel_job(job_id: str) -> None:
   if not success:
     job_status = guidewire_service.get_job_status(job_id)
     if not job_status:
-      raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail=f'Job {job_id} not found'
-      )
+      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Job {job_id} not found')
     raise HTTPException(
       status_code=status.HTTP_400_BAD_REQUEST,
       detail=f'Job {job_id} cannot be cancelled (status: {job_status.status})',
@@ -167,9 +164,7 @@ async def stream_ray_logs(job_id: str):
   """
   job_status = guidewire_service.get_job_status(job_id)
   if not job_status:
-    raise HTTPException(
-      status_code=status.HTTP_404_NOT_FOUND, detail=f'Job {job_id} not found'
-    )
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Job {job_id} not found')
 
   async def log_stream():
     """Generator for streaming Ray logs."""
@@ -228,10 +223,21 @@ async def stream_ray_logs(job_id: str):
                 for line in new_lines:
                   # Filter out noise - only show relevant lines
                   line = line.strip()
-                  if any(keyword in line for keyword in [
-                    'ERROR', 'Exception', 'Failed', 'Table', 'Processing',
-                    'manifest', 'S3', 'Delta', 'INFO', 'WARNING'
-                  ]):
+                  if any(
+                    keyword in line
+                    for keyword in [
+                      'ERROR',
+                      'Exception',
+                      'Failed',
+                      'Table',
+                      'Processing',
+                      'manifest',
+                      'S3',
+                      'Delta',
+                      'INFO',
+                      'WARNING',
+                    ]
+                  ):
                     # Send as SSE
                     yield f'data: [{log_name}] {line}\\n\\n'
 

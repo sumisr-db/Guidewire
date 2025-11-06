@@ -1,8 +1,8 @@
 """Environment-based S3 configuration utility."""
 
+import logging
 import os
 from typing import Optional
-import logging
 
 from server.models.s3_config import S3Config, S3Provider
 

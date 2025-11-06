@@ -1,14 +1,15 @@
 """FastAPI router for Delta Lake inspection endpoints."""
 
-from fastapi import APIRouter, HTTPException, status, Query
 from typing import List
 
+from fastapi import APIRouter, HTTPException, Query, status
+
 from server.models.delta import (
-  DeltaTableInfo,
-  DeltaTableSchema,
-  DeltaTableHistory,
-  DeltaTablePreview,
   DeltaListTablesRequest,
+  DeltaTableHistory,
+  DeltaTableInfo,
+  DeltaTablePreview,
+  DeltaTableSchema,
 )
 from server.services.delta_service import delta_service
 
@@ -49,7 +50,8 @@ async def list_delta_tables(request: DeltaListTablesRequest) -> List[DeltaTableI
 
 @router.post('/tables/schema', response_model=DeltaTableSchema)
 async def get_table_schema(
-  request: DeltaListTablesRequest, table_path: str = Query(..., description='S3 path to Delta table')
+  request: DeltaListTablesRequest,
+  table_path: str = Query(..., description='S3 path to Delta table'),
 ) -> DeltaTableSchema:
   """Get schema for a Delta table.
 
@@ -84,7 +86,8 @@ async def get_table_schema(
 
 @router.post('/tables/history', response_model=DeltaTableHistory)
 async def get_table_history(
-  request: DeltaListTablesRequest, table_path: str = Query(..., description='S3 path to Delta table')
+  request: DeltaListTablesRequest,
+  table_path: str = Query(..., description='S3 path to Delta table'),
 ) -> DeltaTableHistory:
   """Get version history for a Delta table.
 

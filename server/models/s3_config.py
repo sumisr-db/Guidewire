@@ -2,6 +2,7 @@
 
 from enum import Enum
 from typing import Optional
+
 from pydantic import BaseModel, Field, root_validator
 
 
@@ -131,6 +132,7 @@ class S3Config(BaseModel):
     either 'bucket' or 'bucket/prefix'. This validator splits combined
     values and ensures prefix fields are set consistently.
     """
+
     def split_raw(raw: Optional[str]) -> tuple[Optional[str], Optional[str]]:
       if not raw:
         return raw, None

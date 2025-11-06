@@ -2,10 +2,11 @@
 
 import logging
 from typing import Optional
+
 import boto3
 from botocore.exceptions import ClientError
 
-from server.models.s3_config import S3Config, S3Provider
+from server.models.s3_config import S3Config
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,9 @@ class S3ClientFactory:
       # If we've already checked/created this bucket, reuse the result
       if bucket_name in seen_buckets:
         # Mirror the existing status for this raw input
-        existing_status = next((v for k, v in bucket_status.items() if k.startswith(bucket_name)), False)
+        existing_status = next(
+          (v for k, v in bucket_status.items() if k.startswith(bucket_name)), False
+        )
         bucket_status[raw_name] = existing_status
         continue
 

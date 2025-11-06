@@ -1,13 +1,12 @@
 """Service for running Guidewire CDA to Delta Lake processing with Ray."""
 
-import os
-import uuid
-import asyncio
-import time
-from typing import Dict, Optional
-from datetime import datetime
-from threading import Thread, Lock
 import logging
+import os
+import time
+import uuid
+from datetime import datetime
+from threading import Lock, Thread
+from typing import Dict, Optional
 
 from server.models.guidewire import (
   GuidewireConfig,
@@ -180,7 +179,7 @@ class GuidewireService:
       logger.info(f'Job {job_id}: Starting Guidewire Processor with Ray parallel mode')
 
       # Import and create processor
-      from guidewire import Processor, Result
+      from guidewire import Processor
 
       job_status.current_message = 'Loading configuration and preparing Ray...'
 
@@ -196,7 +195,9 @@ class GuidewireService:
 
       # Get total tables count
       job_status.total_tables = len(processor.table_names)
-      job_status.current_message = f'Loading manifest from S3 for {job_status.total_tables} tables...'
+      job_status.current_message = (
+        f'Loading manifest from S3 for {job_status.total_tables} tables...'
+      )
       logger.info(f'Job {job_id}: Processing {job_status.total_tables} tables')
 
       # Store processor and create lock for thread-safe access
@@ -218,7 +219,9 @@ class GuidewireService:
       monitor_thread.start()
 
       # Run the processor (blocking call)
-      job_status.current_message = f'Processing {job_status.total_tables} tables with Ray parallel mode...'
+      job_status.current_message = (
+        f'Processing {job_status.total_tables} tables with Ray parallel mode...'
+      )
       processor.run()
 
       # Process results
@@ -279,7 +282,9 @@ class GuidewireService:
       # Update job status with final results
       job_status.status = 'completed'
       job_status.end_time = datetime.now()
-      job_status.current_message = f'Completed successfully - {tables_processed} tables processed, {tables_failed} failed'
+      job_status.current_message = (
+        f'Completed successfully - {tables_processed} tables processed, {tables_failed} failed'
+      )
       job_status.results = results
       job_status.tables_processed = tables_processed
       job_status.tables_failed = tables_failed
@@ -344,7 +349,7 @@ class GuidewireService:
       raise ValueError(f'S3 connection failed: {error_msg}')
 
     # Auto-create buckets if they don't exist
-    logger.info(f'Ensuring S3 buckets exist (auto-create enabled)')
+    logger.info('Ensuring S3 buckets exist (auto-create enabled)')
     bucket_status = S3ClientFactory.ensure_buckets_exist(config.s3_config, auto_create=True)
 
     # Check if all required buckets are available

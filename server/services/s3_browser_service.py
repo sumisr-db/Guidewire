@@ -1,17 +1,16 @@
 """Service for S3 browser operations."""
 
-import boto3
-from typing import List, Tuple
 import logging
-from datetime import datetime
+from typing import List
+
+import boto3
 
 from server.models.s3_browser import (
+  S3BucketInfo,
+  S3Credentials,
+  S3ListingResponse,
   S3Object,
   S3Prefix,
-  S3ListingResponse,
-  S3BucketInfo,
-  S3BrowserConfig,
-  S3Credentials,
 )
 
 logger = logging.getLogger(__name__)
@@ -64,9 +63,7 @@ class S3BrowserService:
           )
         )
 
-      logger.info(
-        f'Listed {len(buckets)} buckets from {credentials.provider.value} S3'
-      )
+      logger.info(f'Listed {len(buckets)} buckets from {credentials.provider.value} S3')
       return buckets
 
     except Exception as e:
@@ -136,8 +133,7 @@ class S3BrowserService:
         )
 
       logger.info(
-        f'Listed {len(prefixes)} folders and {len(objects)} objects in '
-        f's3://{bucket}/{prefix}'
+        f'Listed {len(prefixes)} folders and {len(objects)} objects in s3://{bucket}/{prefix}'
       )
 
       return S3ListingResponse(
@@ -150,9 +146,7 @@ class S3BrowserService:
       )
 
     except Exception as e:
-      logger.error(
-        f'Failed to list objects in s3://{bucket}/{prefix}: {e}', exc_info=True
-      )
+      logger.error(f'Failed to list objects in s3://{bucket}/{prefix}: {e}', exc_info=True)
       raise
 
   @staticmethod

@@ -20,7 +20,6 @@ dependencies = [
     "mlflow[databricks]>=3.1.1",
     "debugpy>=1.8.15",
     "python-dotenv>=1.1.1",
-    "guidewire-cda-delta-clone",
     "boto3>=1.39.8",
     "databricks-sql-connector>=4.1.3",
 ]
@@ -117,11 +116,9 @@ classmethod-decorators = ["classmethod", "pydantic.validator"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.uv.sources]
-guidewire-cda-delta-clone = { path = "guidewire_cda_delta_clone-0.1.2-py3-none-any.whl" }
-
 [dependency-groups]
 dev = [
+    "ruff>=0.12.2",
     "tomli>=2.2.1",
     "websockets>=15.0.1",
 ]

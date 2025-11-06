@@ -2,22 +2,21 @@
 
 import json
 import logging
-from typing import List, Optional, Dict, Any
-from datetime import datetime
+import time
+from typing import Any, Dict, List
+
+import boto3
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.compute import Language
-import os
-import boto3
-import time
 
 from server.models.delta import (
-  DeltaTableInfo,
-  DeltaTableSchema,
   DeltaColumn,
-  DeltaTableHistory,
   DeltaHistoryEntry,
-  DeltaTablePreview,
   DeltaListTablesRequest,
+  DeltaTableHistory,
+  DeltaTableInfo,
+  DeltaTablePreview,
+  DeltaTableSchema,
 )
 
 logger = logging.getLogger(__name__)
@@ -74,7 +73,9 @@ class DeltaService:
 
     except Exception as e:
       logger.error(f'Failed to access cluster {self.cluster_id}: {e}')
-      raise ValueError(f'Cannot access cluster {self.cluster_id}. Ensure the app service principal has CAN_RESTART permission.')
+      raise ValueError(
+        f'Cannot access cluster {self.cluster_id}. Ensure the app service principal has CAN_RESTART permission.'
+      )
 
     return self.cluster_id
 
@@ -135,7 +136,7 @@ print("__RESULT_END__")
       cluster_id=cluster_id,
       context_id=context_response.id,
       language=Language.PYTHON,
-      command=python_code
+      command=python_code,
     ).result()
 
     # Check if execution was successful
@@ -153,7 +154,9 @@ print("__RESULT_END__")
       logger.error(f'SQL execution failed: {error_msg}')
       raise Exception(f'SQL execution failed: {error_msg}')
     else:
-      raise Exception(f'SQL execution failed with status: {result.status.value if result.status else "UNKNOWN"}')
+      raise Exception(
+        f'SQL execution failed with status: {result.status.value if result.status else "UNKNOWN"}'
+      )
 
   def list_tables(self, request: DeltaListTablesRequest) -> List[DeltaTableInfo]:
     """List Delta tables in S3 location.
@@ -173,9 +176,7 @@ print("__RESULT_END__")
         prefix += '/'
 
       paginator = s3_client.get_paginator('list_objects_v2')
-      pages = paginator.paginate(
-        Bucket=request.s3_bucket, Prefix=prefix, Delimiter='/'
-      )
+      pages = paginator.paginate(Bucket=request.s3_bucket, Prefix=prefix, Delimiter='/')
 
       tables = []
       for page in pages:
@@ -200,17 +201,13 @@ print("__RESULT_END__")
             try:
               # Get the latest delta log file (starts with highest number)
               delta_logs = s3_client.list_objects_v2(
-                Bucket=request.s3_bucket,
-                Prefix=f'{table_path}_delta_log/',
-                MaxKeys=1000
+                Bucket=request.s3_bucket, Prefix=f'{table_path}_delta_log/', MaxKeys=1000
               )
 
               # Find the latest checkpoint or transaction log
               latest_log = None
               for log_obj in sorted(
-                delta_logs.get('Contents', []),
-                key=lambda x: x['Key'],
-                reverse=True
+                delta_logs.get('Contents', []), key=lambda x: x['Key'], reverse=True
               ):
                 if log_obj['Key'].endswith('.json'):
                   latest_log = log_obj
@@ -220,10 +217,7 @@ print("__RESULT_END__")
                 last_modified = latest_log.get('LastModified')
 
                 # Read the transaction log to count data files
-                log_response = s3_client.get_object(
-                  Bucket=request.s3_bucket,
-                  Key=latest_log['Key']
-                )
+                log_response = s3_client.get_object(Bucket=request.s3_bucket, Key=latest_log['Key'])
                 log_content = log_response['Body'].read().decode('utf-8')
 
                 # Parse newline-delimited JSON
@@ -259,9 +253,7 @@ print("__RESULT_END__")
       logger.error(f'Failed to list Delta tables: {e}', exc_info=True)
       raise
 
-  def get_table_schema(
-    self, table_path: str, request: DeltaListTablesRequest
-  ) -> DeltaTableSchema:
+  def get_table_schema(self, table_path: str, request: DeltaListTablesRequest) -> DeltaTableSchema:
     """Get schema for a Delta table.
 
     Args:
@@ -273,7 +265,7 @@ print("__RESULT_END__")
     """
     try:
       # Get table schema using DESCRIBE
-      query = f"DESCRIBE EXTENDED delta.`{table_path}`"
+      query = f'DESCRIBE EXTENDED delta.`{table_path}`'
       results = self._execute_sql(query, request)
 
       columns = []
@@ -334,7 +326,7 @@ print("__RESULT_END__")
     """
     try:
       # Get table history
-      query = f"DESCRIBE HISTORY delta.`{table_path}`"
+      query = f'DESCRIBE HISTORY delta.`{table_path}`'
       results = self._execute_sql(query, request)
 
       entries = []
@@ -369,9 +361,7 @@ print("__RESULT_END__")
         )
 
       table_name = table_path.split('/')[-1]
-      logger.info(
-        f'Got history for table {table_name}: {len(entries)} versions'
-      )
+      logger.info(f'Got history for table {table_name}: {len(entries)} versions')
 
       return DeltaTableHistory(
         table_name=table_name, current_version=current_version, entries=entries
@@ -396,7 +386,7 @@ print("__RESULT_END__")
     """
     try:
       # Get sample data
-      query = f"SELECT * FROM delta.`{table_path}` LIMIT {limit}"
+      query = f'SELECT * FROM delta.`{table_path}` LIMIT {limit}'
       rows = self._execute_sql(query, request)
 
       columns = list(rows[0].keys()) if rows else []
@@ -404,9 +394,7 @@ print("__RESULT_END__")
 
       logger.info(f'Got preview for table {table_name}: {len(rows)} rows')
 
-      return DeltaTablePreview(
-        table_name=table_name, columns=columns, rows=rows, limit=limit
-      )
+      return DeltaTablePreview(table_name=table_name, columns=columns, rows=rows, limit=limit)
 
     except Exception as e:
       logger.error(f'Failed to get table preview: {e}', exc_info=True)

@@ -1,7 +1,8 @@
 """Pydantic models for Guidewire CDA processing."""
 
 from datetime import datetime
-from typing import Optional, List, Any
+from typing import List, Optional
+
 from pydantic import BaseModel, Field, computed_field
 
 from server.models.s3_config import S3Config
@@ -67,13 +68,9 @@ class ProcessingResult(BaseModel):
     default=None, description='Processing finish time'
   )
   process_start_watermark: int = Field(..., description='Starting watermark')
-  process_finish_watermark: Optional[int] = Field(
-    default=None, description='Ending watermark'
-  )
+  process_finish_watermark: Optional[int] = Field(default=None, description='Ending watermark')
   process_start_version: int = Field(..., description='Starting Delta version')
-  process_finish_version: Optional[int] = Field(
-    default=None, description='Ending Delta version'
-  )
+  process_finish_version: Optional[int] = Field(default=None, description='Ending Delta version')
   manifest_records: int = Field(..., description='Number of records in manifest')
   manifest_watermark: int = Field(..., description='Manifest watermark')
   watermarks: List[int] = Field(default_factory=list, description='List of watermarks')
@@ -121,9 +118,7 @@ class ProcessingJobStatus(BaseModel):
   results: List[ProcessingResult] = Field(
     default_factory=list, description='Processing results for each table'
   )
-  error_message: Optional[str] = Field(
-    default=None, description='Error message if job failed'
-  )
+  error_message: Optional[str] = Field(default=None, description='Error message if job failed')
 
   @computed_field
   @property

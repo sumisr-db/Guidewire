@@ -1,12 +1,13 @@
 """FastAPI router for S3 browser endpoints."""
 
-from fastapi import APIRouter, HTTPException, status, Query
-from typing import List, Optional
+from typing import List
+
+from fastapi import APIRouter, HTTPException, Query, status
 
 from server.models.s3_browser import (
   S3BucketInfo,
-  S3ListingResponse,
   S3Credentials,
+  S3ListingResponse,
 )
 from server.services.s3_browser_service import s3_browser_service
 
@@ -74,9 +75,7 @@ async def list_objects(
       ```
   """
   try:
-    listing = s3_browser_service.list_objects(
-      credentials, bucket, prefix, max_keys
-    )
+    listing = s3_browser_service.list_objects(credentials, bucket, prefix, max_keys)
     return listing
   except Exception as e:
     raise HTTPException(
