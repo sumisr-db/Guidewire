@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Opening Databricks App Template Setup..."
+echo "🚀 Opening Guidewire Connector Monitor Setup..."
 
 # Get the directory of this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

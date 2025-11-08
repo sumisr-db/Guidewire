@@ -1,4 +1,4 @@
-"""FastAPI application for Databricks App Template."""
+"""FastAPI application for Guidewire Connector Monitor."""
 
 import os
 from contextlib import asynccontextmanager
@@ -40,8 +40,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-  title='Databricks App API',
-  description='Modern FastAPI application template for Databricks Apps with React frontend',
+  title='Guidewire Connector Monitor API',
+  description='Guidewire CDA to Delta Lake processing monitor with job management, Delta inspection, and S3 browsing',
   version='0.1.0',
   lifespan=lifespan,
 )

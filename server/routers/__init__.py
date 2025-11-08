@@ -1,5 +1,5 @@
-# Generic router module for the Databricks app template
-# Add your FastAPI routes here
+# Router module for the Guidewire Connector Monitor
+# Includes user info and other core API routes
 
 from fastapi import APIRouter
 

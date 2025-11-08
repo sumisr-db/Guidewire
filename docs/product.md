@@ -205,8 +205,8 @@ processor.run()
 
 ### Must Use
 - Databricks Apps platform
-- FastAPI backend (already in template)
-- React frontend (already in template)
+- FastAPI backend (already implemented)
+- React frontend (already implemented)
 - Databricks SDK for data access
 
 ### Must Work With

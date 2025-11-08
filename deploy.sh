@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Deploy the Databricks App Template to Databricks.
+# Deploy the Guidewire Connector Monitor to Databricks.
 # For configuration options see README.md and .env.local.
 # Usage: ./deploy.sh [--verbose] [--create]
 

@@ -1,5 +1,5 @@
 {
-  "name": "databricks-app-template-client",
+  "name": "guidewire-connector-monitor-client",
   "private": true,
   "version": "0.1.0",
   "type": "module",

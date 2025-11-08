@@ -516,7 +516,7 @@ The Guidewire Connector Monitor provides four main features accessible via the n
 
 ### 🏠 Home Page
 
-**Purpose**: Overview of the development template, tech stack, and getting started information.
+**Purpose**: Overview of the application, tech stack, and getting started information.
 
 **Features**:
 - Current user information from Databricks
@@ -827,6 +827,6 @@ Bottom of the browser shows:
 
 ---
 
-**Ready to build something amazing?** 🎉
+**Ready to process Guidewire data?** 🎉
 
-Start with `./setup.sh` and let this template accelerate your Databricks app development!
+Start with `./setup.sh` to configure your environment and begin monitoring your Guidewire CDA processing jobs!

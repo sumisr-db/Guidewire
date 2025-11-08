@@ -1,8 +1,8 @@
-# Databricks App Template Development Guide
+# Guidewire Connector Monitor Development Guide
 
 ## Project Memory
 
-This is a modern full-stack application template for Databricks Apps, featuring FastAPI backend with React TypeScript frontend and modern development tooling.
+This is a production Guidewire CDA to Delta Lake processing monitor for Databricks Apps, featuring FastAPI backend with React TypeScript frontend for processing, inspecting, and monitoring Guidewire Cloud Data Access data.
 
 ## Tech Stack
 
@@ -324,4 +324,4 @@ Claude understands natural language commands for common development tasks:
 - If hot reload not working, restart `./watch.sh`
 - If dependencies missing, run `./setup.sh` to reinstall
 
-Remember: This is a development template focused on rapid iteration and modern tooling.
+Remember: This is a production application for monitoring Guidewire CDA data processing, built with modern tooling for rapid iteration and deployment.

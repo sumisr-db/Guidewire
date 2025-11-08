@@ -1,9 +1,9 @@
 [project]
-name = "databricks-app-template"
+name = "guidewire-connector-monitor"
 version = "0.1.0"
-description = "Modern Databricks App Template - FastAPI backend with React TypeScript frontend"
+description = "Guidewire CDA to Delta Lake processing monitor - FastAPI backend with React TypeScript frontend for processing, inspecting, and monitoring Guidewire Cloud Data Access data"
 authors = [
-    {name = "Your Name", email = "your.email@databricks.com"},
+    {name = "Suman Misra", email = "suman.misra@databricks.com"},
 ]
 dependencies = [
     "fastapi>=0.104.1",

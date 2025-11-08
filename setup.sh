@@ -22,8 +22,8 @@ if [ "$AUTO_CLOSE" = true ]; then
     trap cleanup EXIT
 fi
 
-echo "🚀 Databricks App Template Setup"
-echo "================================="
+echo "🚀 Guidewire Connector Monitor Setup"
+echo "====================================="
 
 # Get the directory of this script
 SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
